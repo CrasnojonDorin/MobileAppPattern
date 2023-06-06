@@ -1,0 +1,219 @@
+@startuml
+set namespaceSeparator ::
+
+class "proiect::main.dart::MyApp" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "proiect::main.dart::MyApp"
+
+class "proiect::model::car.dart::CarModel" {
+  +int id
+  +String marca
+  +String model
+  +int anFabricatie
+  +String tipMasina
+  +String tipMotor
+  +double litraj
+  +int putere
+  +double consum
+  +int pretPerZi
+  +String? pathImage
+}
+
+class "proiect::model::reservation.dart::ReservationModel" {
+  +CarModel car
+  +DateTime startDate
+  +DateTime endDate
+  +bool? hasGps
+  +int? hasChildChairs
+  +bool? personalDriver
+  +bool? wifi
+  +bool? casco
+  +double totalPrice
+}
+
+"proiect::model::reservation.dart::ReservationModel" o-- "proiect::model::car.dart::CarModel"
+
+class "proiect::model::user.dart::UserModel" {
+  +String username
+  +String password
+  +String role
+}
+
+class "proiect::pattern::behavioral::observer::client_oberser.dart::ClientObserver" {
+  +String username
+  +List<CarModel> listCar
+  +void onCarAdded()
+  +void onCarRemoved()
+}
+
+"proiect::pattern::behavioral::observer::interface_observer.dart::InterfaceObserver" <|-- "proiect::pattern::behavioral::observer::client_oberser.dart::ClientObserver"
+
+abstract class "proiect::pattern::behavioral::observer::interface_observer.dart::InterfaceObserver" {
+  +List<CarModel> listCar
+  +String username
+  +void onCarAdded()
+  +void onCarRemoved()
+}
+
+class "proiect::pattern::behavioral::strategy::context_stategy.dart::ContextStrategy" {
+  +InterfaceDiscountStrategy strategy
+  +DateTime startDate
+  +DateTime endDate
+  +int price
+  +double totalPrice
+  +void setStrategy()
+  +void applicationDiscount()
+}
+
+"proiect::pattern::behavioral::strategy::context_stategy.dart::ContextStrategy" o-- "proiect::pattern::behavioral::strategy::interface_discount_strategy.dart::InterfaceDiscountStrategy"
+
+class "proiect::pattern::behavioral::strategy::discount_stategy_impl.dart::NoDiscountStrategy" {
+  +double calculateDiscount()
+}
+
+"proiect::pattern::behavioral::strategy::interface_discount_strategy.dart::InterfaceDiscountStrategy" <|-- "proiect::pattern::behavioral::strategy::discount_stategy_impl.dart::NoDiscountStrategy"
+
+class "proiect::pattern::behavioral::strategy::discount_stategy_impl.dart::EarlyBirdDiscountStrategy" {
+  +double calculateDiscount()
+}
+
+"proiect::pattern::behavioral::strategy::interface_discount_strategy.dart::InterfaceDiscountStrategy" <|-- "proiect::pattern::behavioral::strategy::discount_stategy_impl.dart::EarlyBirdDiscountStrategy"
+
+class "proiect::pattern::behavioral::strategy::discount_stategy_impl.dart::MonthDiscountStrategy" {
+  +double calculateDiscount()
+}
+
+"proiect::pattern::behavioral::strategy::interface_discount_strategy.dart::InterfaceDiscountStrategy" <|-- "proiect::pattern::behavioral::strategy::discount_stategy_impl.dart::MonthDiscountStrategy"
+
+abstract class "proiect::pattern::behavioral::strategy::interface_discount_strategy.dart::InterfaceDiscountStrategy" {
+  +double calculateDiscount()
+}
+
+class "proiect::pattern::creational::database.dart::Database" {
+  {static} -Database? _instance
+  +List<CarModel> availableCarModels
+  +Map<String, List<ReservationModel>> reservations
+  +List<InterfaceObserver> observers
+  +Database getInstance()
+  +void addCarModel()
+  +void removeCarModel()
+  +void makeReservation()
+  +void cancelReservation()
+  +void registerObserver()
+  +void unregisterObserver()
+  +void notifyCarAdded()
+}
+
+"proiect::pattern::creational::database.dart::Database" o-- "proiect::pattern::creational::database.dart::Database"
+
+abstract class "proiect::pattern::creational::factory.dart::CarFactory" {
+  +CarModel createCar()
+}
+
+class "proiect::pattern::creational::factory.dart::SUVFactory" {
+  +CarModel createCar()
+}
+
+"proiect::pattern::creational::factory.dart::CarFactory" <|-- "proiect::pattern::creational::factory.dart::SUVFactory"
+
+class "proiect::pattern::creational::factory.dart::SedanFactory" {
+  +CarModel createCar()
+}
+
+"proiect::pattern::creational::factory.dart::CarFactory" <|-- "proiect::pattern::creational::factory.dart::SedanFactory"
+
+class "proiect::pattern::creational::factory.dart::CompactCarFactory" {
+  +CarModel createCar()
+}
+
+"proiect::pattern::creational::factory.dart::CarFactory" <|-- "proiect::pattern::creational::factory.dart::CompactCarFactory"
+
+class "proiect::pattern::creational::factory.dart::SportCarFactory" {
+  +CarModel createCar()
+}
+
+"proiect::pattern::creational::factory.dart::CarFactory" <|-- "proiect::pattern::creational::factory.dart::SportCarFactory"
+
+abstract class "proiect::pattern::structural::decorator.dart::Reservation" {
+  +void addOption()
+}
+
+class "proiect::pattern::structural::decorator.dart::BasicReservation" {
+  +void addOption()
+}
+
+"proiect::pattern::structural::decorator.dart::Reservation" <|-- "proiect::pattern::structural::decorator.dart::BasicReservation"
+
+abstract class "proiect::pattern::structural::decorator.dart::ReservationDecorator" {
+  +Reservation decoratedReservation
+  +void addOption()
+}
+
+"proiect::pattern::structural::decorator.dart::ReservationDecorator" o-- "proiect::pattern::structural::decorator.dart::Reservation"
+"proiect::pattern::structural::decorator.dart::Reservation" <|-- "proiect::pattern::structural::decorator.dart::ReservationDecorator"
+
+class "proiect::pattern::structural::decorator.dart::GPSDecorator" {
+  +Reservation decoratedReservation
+  +void addOption()
+}
+
+"proiect::pattern::structural::decorator.dart::GPSDecorator" o-- "proiect::pattern::structural::decorator.dart::Reservation"
+"proiect::pattern::structural::decorator.dart::ReservationDecorator" <|-- "proiect::pattern::structural::decorator.dart::GPSDecorator"
+
+class "proiect::pattern::structural::decorator.dart::WifiDecorator" {
+  +void addOption()
+}
+
+"proiect::pattern::structural::decorator.dart::ReservationDecorator" <|-- "proiect::pattern::structural::decorator.dart::WifiDecorator"
+
+class "proiect::pattern::structural::decorator.dart::BabyChairDecorator" {
+  +void addOption()
+}
+
+"proiect::pattern::structural::decorator.dart::ReservationDecorator" <|-- "proiect::pattern::structural::decorator.dart::BabyChairDecorator"
+
+class "proiect::pattern::structural::decorator.dart::CascoDecorator" {
+  +void addOption()
+}
+
+"proiect::pattern::structural::decorator.dart::ReservationDecorator" <|-- "proiect::pattern::structural::decorator.dart::CascoDecorator"
+
+class "proiect::pattern::structural::decorator.dart::PersonalDriverDecorator" {
+  +void addOption()
+}
+
+"proiect::pattern::structural::decorator.dart::ReservationDecorator" <|-- "proiect::pattern::structural::decorator.dart::PersonalDriverDecorator"
+
+class "proiect::pattern::structural::proxy::authorization_user_impl.dart::AuthorizationUserImpl" {
+  +Database rentalManager
+  +void addCarModel()
+  +void cancelReservation()
+  +void makeReservation()
+  +void removeCarModel()
+}
+
+"proiect::pattern::structural::proxy::authorization_user_impl.dart::AuthorizationUserImpl" o-- "proiect::pattern::creational::database.dart::Database"
+"proiect::pattern::structural::proxy::interface_authorization_user.dart::IAuthorizationUser" <|-- "proiect::pattern::structural::proxy::authorization_user_impl.dart::AuthorizationUserImpl"
+
+class "proiect::pattern::structural::proxy::authorization_user_proxy.dart::AuthorizationUserProxy" {
+  -IAuthorizationUser _iAuthorizationUser
+  -String _role
+  +void addCarModel()
+  +void cancelReservation()
+  +void makeReservation()
+  +void removeCarModel()
+}
+
+"proiect::pattern::structural::proxy::authorization_user_proxy.dart::AuthorizationUserProxy" o-- "proiect::pattern::structural::proxy::interface_authorization_user.dart::IAuthorizationUser"
+"proiect::pattern::structural::proxy::interface_authorization_user.dart::IAuthorizationUser" <|-- "proiect::pattern::structural::proxy::authorization_user_proxy.dart::AuthorizationUserProxy"
+
+abstract class "proiect::pattern::structural::proxy::interface_authorization_user.dart::IAuthorizationUser" {
+  +void addCarModel()
+  +void removeCarModel()
+  +void makeReservation()
+  +void cancelReservation()
+}
+
+@enduml
